@@ -1,100 +1,90 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
-import data_reading
 import numpy as np
+import random
+import data_reading
 import matplotlib.pyplot as plt
-from matplotlib import colors as mcolors
 
-from numpy.linalg import *
-import math as math
-from random import *
 
-def MultiGaussian(X, Mju, SIGMA, d):         #value of MultiGaussian
-    part1 = 1/(pow(2*math.pi, d/2.0)*pow(det(SIGMA), 1/2.0))
-   # print "part1 =", part1
+STOP_THRESHOLD = 1e-4
+CLUSTER_THRESHOLD = 1e-1
 
-    part2 = (-1/2.0)*dot(dot(transpose(X - Mju), inv(SIGMA)), X - Mju)
-   # print "part2 =", part2
+def distance(a, b):
+    return np.linalg.norm(np.array(a) - np.array(b))
 
-    part3 = pow(math.e, part2)
-   # print "part3 =", part3
+def gaussian_kernel(distance, bandwidth):
+    return (1 / (bandwidth * np.sqrt(2 * np.pi))) * np.exp(-0.5 * ((distance / bandwidth)) ** 2)
 
-    res = part1*part3
-    return float(res)
+class MeanShift(object):
+    def __init__(self, kernel=gaussian_kernel):
+        self.kernel = kernel
 
-def Peak_MeanShift(X, d, N, h, maxRound, limitation):
-    I = eye(d)
-    SIMGA = pow(h, 2)*I
-    X = transpose(X)
-    for n in range(N):
-        x_t = transpose(array([X[n]]))
-        sum = 0
-        array_sum = zeros((d, 1))
-        for t in range(maxRound):
-            for i in range(N):
-                x_i = transpose(array([X[i]]))
-                gauss = MultiGaussian(x_i, x_t, SIMGA, d)
-                sum += gauss
-                array_sum += x_i*gauss
-            x_t = array_sum/sum
-            if(t != 0):
-                sub = abs(x_t - x_last) < limitation
-                T = array([[True], [True]])
-                res = any(sub == T)
-                if(res):
-                    print 'Iterate t='+str(t)
-                    break
-            x_last = x_t
-            print 'N = '+str(n)+', Round ='+str(t)+" :"
-            print x_t
-            print "           "
-        if(n == 0):
-            X_peak = x_t
-        else:
-            X_peak = hstack((X_peak, x_t))
+    def fit(self, points, kernel_bandwidth):
 
-    return X_peak
+        shift_points = np.array(points)
+        shifting = [True] * points.shape[0]
 
-def Clustering_MeanShift(X, X_peak, N, d, cluster_gap):
-    X = transpose(X)
-    X_peak = transpose(X_peak)
-    Y = []
-    for i in range(N):
-        x_peak = array([X_peak[i]])
-        x = array([X[i]])
-        HasClass = False
-        if(i == 0):
-            peak_cluster = {0: x_peak}
-            cluster = {0: x}
-            Y.append(1)
-        else:
-            for k in range(len(cluster)):
-                J = peak_cluster[k].shape[0]
-                peak_cluster_k = ones((1, d))
+        while True:
+            max_dist = 0
+            for i in range(0, len(shift_points)):
+                if not shifting[i]:
+                    continue
+                p_shift_init = shift_points[i].copy()
+                shift_points[i] = self._shift_point(shift_points[i], points, kernel_bandwidth)
+                dist = distance(shift_points[i], p_shift_init)
+                max_dist = max(max_dist, dist)
+                shifting[i] = dist > STOP_THRESHOLD
 
-                for i in range(d):
-                    average = 0
-                    for j in range(J):
-                        average += peak_cluster[k][j][i]
-                    peak_cluster_k[0][i] = average/J
+            if(max_dist < STOP_THRESHOLD):
+                break
+        cluster_ids = self._cluster_points(shift_points.tolist())
+        return shift_points, cluster_ids
 
-                sub = abs(x_peak - peak_cluster_k) < cluster_gap
-                T = ones((d, 1)) > 0
-                res = any(sub == T)
-                if(res):
-                    peak_cluster[k] = vstack((peak_cluster[k], x_peak))
-                    cluster[k] = vstack((cluster[k], x))
-                    Y.append(k+1)
-                    HasClass = True
-                    break
-            if(HasClass == False):
-                peak_cluster[len(peak_cluster)] = x_peak
-                cluster[len(peak_cluster)-1] = x
-                Y.append(len(peak_cluster))
-    print 'peak=', peak_cluster
-    print 'cluster=', cluster
-    print Y
-    return cluster, array([Y])
+    def _shift_point(self, point, points, kernel_bandwidth):
+        shift_x = 0.0
+        shift_y = 0.0
+        scale = 0.0
+        for p in points:
+            dist = distance(point, p)
+            weight = self.kernel(dist, kernel_bandwidth)
+            shift_x += p[0] * weight
+            shift_y += p[1] * weight
+            scale += weight
+        shift_x = shift_x / scale
+        shift_y = shift_y / scale
+        return [shift_x, shift_y]
+
+    def _cluster_points(self, points):
+        cluster_ids = []
+        cluster_idx = 0
+        cluster_centers = []
+
+        for i, point in enumerate(points):
+            if(len(cluster_ids) == 0):
+                cluster_ids.append(cluster_idx)
+                cluster_centers.append(point)
+                cluster_idx += 1
+            else:
+                for center in cluster_centers:
+                    dist = distance(point, center)
+                    if(dist < CLUSTER_THRESHOLD):
+                        cluster_ids.append(cluster_centers.index(center))
+                if(len(cluster_ids) < i + 1):
+                    cluster_ids.append(cluster_idx)
+                    cluster_centers.append(point)
+                    cluster_idx += 1
+        return cluster_ids
+
+def do_the_clustering(datapoints,n):
+  points = datapoints.T
+  matY = np.matrix(points, copy=True)
+  mean_shifter = MeanShift()
+  shift_points, label = mean_shifter.fit(points, kernel_bandwidth=0.9)
+  plt.subplot(2,2,n)
+  label = np.array(label)
+  for i in set(label):
+    print i
+    plt.scatter((points[label == i])[:,0],(points[label == i])[:,1])
 
 if __name__ == '__main__':
   data = data_reading.main()
@@ -105,8 +95,8 @@ if __name__ == '__main__':
   dataCpoints = data["dataC_X"]
   dataClabels = data["dataC_Y"]
   
-  # plt.figure()
-  # do_the_clustering(dataApoints,1)
-  # do_the_clustering(dataBpoints,2)
-  # do_the_clustering(dataCpoints,3)
-  # plt.show()
+  plt.figure()
+  do_the_clustering(dataApoints,1)
+  do_the_clustering(dataBpoints,2)
+  do_the_clustering(dataCpoints,3)
+  plt.show()

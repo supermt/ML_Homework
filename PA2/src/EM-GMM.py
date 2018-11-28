@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
-
-MAX_ITER=100
-
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import multivariate_normal
 import data_reading
+
+MAX_ITER=100
 
 def phi(Y, mu_k, cov_k):
     norm = multivariate_normal(mean=mu_k, cov=cov_k)
