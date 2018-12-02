@@ -12,8 +12,7 @@ def distance(p1,p2):
   return np.sqrt(tmp)
 
 def randomCenters(data,k):
-  """Generate k center within the range of data set."""
-  n = data.shape[0] # the dimension of the points
+  n = data.shape[0]
   centroids = np.zeros((k,n))
   for i in range(n):
     dmin, dmax = np.min(data[:,i]), np.max(data[:,i])
@@ -29,8 +28,8 @@ def Kmeans(data, k=4):
   np.seterr(divide='ignore',invalid='ignore')
   n = data.shape[1]
   centers = randomCenters(data,k)
-  label = np.zeros(n,dtype=np.int) # track the nearest centroid
-  assement = np.zeros(n) # for the assement of our model
+  label = np.zeros(n,dtype=np.int)
+  assement = np.zeros(n) 
   stop = False
   data = data.T
 
@@ -56,11 +55,17 @@ def Kmeans(data, k=4):
 
 def do_the_clustering(datapoints,n):
   K = 4
-  centers, label, assement = Kmeans(datapoints,K)
+  best_centers,best_label,best_assement = Kmeans(datapoints,K)
+  for i in range(10):
+    centers, label, assement = Kmeans(datapoints,K)
+    if assement<=best_assement:
+      best_assement=assement
+      best_label = label   
+
   points = datapoints.T
   plt.subplot(2,2,n)
   for i in range(K):
-    plt.scatter((points[label == i])[:,0],(points[label == i])[:,1])
+    plt.scatter((points[best_label == i])[:,0],(points[best_label == i])[:,1])
 
 if __name__ == '__main__':
   data = data_reading.main()

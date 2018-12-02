@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 
 STOP_THRESHOLD = 1e-4
 CLUSTER_THRESHOLD = 1e-1
+MAX_STPES = 500
 
 def distance(a, b):
     return np.linalg.norm(np.array(a) - np.array(b))
@@ -23,7 +24,7 @@ class MeanShift(object):
 
         shift_points = np.array(points)
         shifting = [True] * points.shape[0]
-
+        steps = 0
         while True:
             max_dist = 0
             for i in range(0, len(shift_points)):
@@ -34,16 +35,18 @@ class MeanShift(object):
                 dist = distance(shift_points[i], p_shift_init)
                 max_dist = max(max_dist, dist)
                 shifting[i] = dist > STOP_THRESHOLD
-
+            steps = steps + 1
             if(max_dist < STOP_THRESHOLD):
                 break
+            if (steps >= MAX_STPES):
+                break
         cluster_ids = self._cluster_points(shift_points.tolist())
-        return shift_points, cluster_ids
+        return steps, shift_points, cluster_ids
 
     def _shift_point(self, point, points, kernel_bandwidth):
         shift_x = 0.0
         shift_y = 0.0
-        scale = 0.0
+        scale = 1.0
         for p in points:
             dist = distance(point, p)
             weight = self.kernel(dist, kernel_bandwidth)
@@ -79,12 +82,13 @@ def do_the_clustering(datapoints,n):
   points = datapoints.T
   matY = np.matrix(points, copy=True)
   mean_shifter = MeanShift()
-  shift_points, label = mean_shifter.fit(points, kernel_bandwidth=0.9)
+  h = 1.9
+  steps, shift_points, label = mean_shifter.fit(points, kernel_bandwidth=h)
   plt.subplot(2,2,n)
   label = np.array(label)
   for i in set(label):
-    print i
     plt.scatter((points[label == i])[:,0],(points[label == i])[:,1])
+  print "produce " + str(i+1) + " clusters using kernel_bandwidth " + str(h) + " with in " + str(steps) + " stpes"
 
 if __name__ == '__main__':
   data = data_reading.main()

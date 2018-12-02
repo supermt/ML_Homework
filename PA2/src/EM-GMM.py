@@ -5,7 +5,8 @@ import matplotlib.pyplot as plt
 from scipy.stats import multivariate_normal
 import data_reading
 
-MAX_ITER=100
+MAX_ITER=500
+
 
 def phi(Y, mu_k, cov_k):
     norm = multivariate_normal(mean=mu_k, cov=cov_k)
@@ -14,9 +15,6 @@ def phi(Y, mu_k, cov_k):
 def getExpectation(Y, mu, cov, alpha):
     N = Y.shape[0]
     K = alpha.shape[0]
-
-    assert N > 1, "There must be more than one sample!"
-    assert K > 1, "There must be more than one gaussian model!"
 
     gamma = np.mat(np.zeros((N, K)))
 
@@ -61,7 +59,7 @@ def scale_data(Y):
         Y[:, i] = (Y[:, i] - min_) / (max_ - min_)
     return Y
 
-def init_params(shape, K):
+def init_params(shape, K,n):
     N, D = shape
     mu = np.random.rand(K, D)
     cov = np.array([np.eye(D)] * K)
@@ -69,28 +67,34 @@ def init_params(shape, K):
     return mu, cov, alpha
 
 
-def GMM_EM(Y, K, times):
+def GMM_EM(Y, K, times,n):
     Y = scale_data(Y)
-    mu, cov, alpha = init_params(Y.shape, K)
+    mu, cov, alpha = init_params(Y.shape, K,n)
+    print mu
+    MU = mu
     for i in range(times):
         gamma = getExpectation(Y, mu, cov, alpha)
         mu, cov, alpha = maximize(Y, gamma)
-    return mu, cov, alpha
+        if (mu == MU).all():
+            break
+        else:
+            MU=mu
+    return i,mu, cov, alpha
 
 def do_the_clustering(datapoints,n):
   points = datapoints.T
   matY = np.matrix(points, copy=True)
   K = 4
   plt.subplot(2,2,n)
-  # for i in range(4):
-    # plt.scatter((points[label == i])[:,0],(points[label == i])[:,1])
-  mu, cov, alpha = GMM_EM(matY, K, MAX_ITER)
+  iteration, mu, cov, alpha = GMM_EM(matY, K, MAX_ITER,n)
+  print iteration
   N = points.shape[0]
   gamma = getExpectation(matY, mu, cov, alpha)
   label = np.array(gamma.argmax(axis=1).flatten().tolist()[0])
 
   for i in range(K):
     plt.scatter((points[label == i])[:,0],(points[label == i])[:,1])
+  
 
 
 if __name__ == '__main__':

@@ -17,6 +17,7 @@ def demo():
     
     ## extract features from image (step size = 7)
     X,L = pa2.getfeatures(img, 7)
+    print X
 
     ## Call kmeans function in scipy.  You need to write this yourself!
     C,Y = vq.kmeans2(vq.whiten(X.T), 2, iter=1000, minit='random')
