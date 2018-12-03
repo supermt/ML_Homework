@@ -17,6 +17,7 @@ def randomCenters(data,k):
   for i in range(n):
     dmin, dmax = np.min(data[:,i]), np.max(data[:,i])
     centroids[:,i] = dmin + (dmax - dmin) * np.random.rand(k)
+
   return centroids
 
 def should_stop(centers1, centers2):
@@ -51,6 +52,10 @@ def Kmeans(data, k=4):
     if iter_count >= MAX_ITER:
       stop=True
   return centers, label, np.sum(assement)
+
+def clustering(datapoints,K):
+  best_centers,best_label,best_assement = Kmeans(datapoints,K)
+  return best_label
 
 
 def do_the_clustering(datapoints,n):

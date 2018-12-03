@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 STOP_THRESHOLD = 1e-4
 CLUSTER_THRESHOLD = 1e-1
-MAX_STPES = 500
+MAX_STPES = 100
 
 def distance(a, b):
     return np.linalg.norm(np.array(a) - np.array(b))
@@ -21,7 +21,7 @@ class MeanShift(object):
         self.kernel = kernel
 
     def fit(self, points, kernel_bandwidth):
-
+        print "Start fitting"
         shift_points = np.array(points)
         shifting = [True] * points.shape[0]
         steps = 0
@@ -40,22 +40,20 @@ class MeanShift(object):
                 break
             if (steps >= MAX_STPES):
                 break
+            print "step " + str(steps)
         cluster_ids = self._cluster_points(shift_points.tolist())
         return steps, shift_points, cluster_ids
 
     def _shift_point(self, point, points, kernel_bandwidth):
-        shift_x = 0.0
-        shift_y = 0.0
-        scale = 1.0
+        shift_dim = np.zeros(len(point))
+        scale = 0.0
         for p in points:
             dist = distance(point, p)
             weight = self.kernel(dist, kernel_bandwidth)
-            shift_x += p[0] * weight
-            shift_y += p[1] * weight
+            shift_dim = shift_dim + p * weight
             scale += weight
-        shift_x = shift_x / scale
-        shift_y = shift_y / scale
-        return [shift_x, shift_y]
+        shift_dim = shift_dim / scale
+        return shift_dim
 
     def _cluster_points(self, points):
         cluster_ids = []
@@ -77,6 +75,16 @@ class MeanShift(object):
                     cluster_centers.append(point)
                     cluster_idx += 1
         return cluster_ids
+
+def clustering(datapoints,bandwidth):
+    points = datapoints.T
+    matY = np.matrix(points, copy=True)
+    mean_shifter = MeanShift()
+    steps, shift_points, label = mean_shifter.fit(points, kernel_bandwidth=bandwidth)
+    label = np.array(label)
+    return label
+
+
 
 def do_the_clustering(datapoints,n):
   points = datapoints.T

@@ -51,11 +51,12 @@ if '__main__' == __name__:
     w = lasso_regression(X, y, lambd=10)
     y_prime = (grand_order(polyx,order) * w)
     
-    fig = plt.figure()
+    fig = plt.figure("LASSO")
     ax = fig.add_subplot(111)
+    ax.plot(poly_data['sampx'][0],y,color='r',linestyle='',marker='*',label="sample")
     # regression line
-    ax.plot(polyx,y_prime,color='g',linestyle='-',marker='')
+    ax.plot(polyx,y_prime,color='g',linestyle='-',marker='',label="predict")
     # poly points
-    ax.plot(polyx,polyy,color='b',linestyle='',marker='*')
+    ax.plot(polyx,polyy,color='b',linestyle='-',marker='',label="target")
     ax.legend()
     plt.show()

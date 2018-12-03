@@ -30,18 +30,23 @@ if '__main__' == __name__:
 
     f = np.array(np.append(np.zeros((1,D)),np.ones((1,n))))
     In = np.eye(n)
+    X = np.zeros((n+D,1))
     matA = np.vstack((np.hstack((-phiT, -In)), np.hstack((phiT, -In))))
-    th = op.linprog(f, matA, b)
+    # th = op.linprog(f, matA, -b)
+    fun = lambda x: np.dot(f.transpose(), x)
+    cons = ({'type': 'ineq', 'fun': lambda x: b-np.dot(matA, x)})
+    print b-np.dot(matA, X)
+    res = op.minimize(fun, X, constraints=cons, method="COBYLA")
 
-    w = np.matrix(-th.x[0:D][::-1]).T
+    w = res.x[0:D]
     y_prime = (grand_order(polyx,order) * w)
     
-    fig = plt.figure()
+    fig = plt.figure("RR")
     ax = fig.add_subplot(111)
     ax.plot(poly_data['sampx'][0],y,color='r',linestyle='',marker='*',label="sample")
-    # regression line
+    # # regression line
     ax.plot(polyx,y_prime,color='g',linestyle='-',marker='',label="predict")
     # poly points
-    ax.plot(polyx,polyy,color='b',linestyle='',marker='.',label="target")
+    ax.plot(polyx,polyy,color='b',linestyle='-',label="target")
     ax.legend()
     plt.show()

@@ -33,7 +33,7 @@ matFi = np.array(matFi)
 
 # part of painting
 
-fig = plt.figure()
+fig = plt.figure("RLS")
 
 subfigs = []
 

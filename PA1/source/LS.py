@@ -53,14 +53,14 @@ for targetx in polyx:
   targety.append(result[0])
 # part of painting
 
-fig = plt.figure()
+fig = plt.figure("LS")
 ax = fig.add_subplot(111)
 # sample points
-ax.plot(sampx,sampy,color='r',linestyle='',marker='.')
+ax.plot(poly_data['sampx'][0],sampy,color='r',linestyle='',marker='*',label="sample")
 # regression line
-ax.plot(polyx,targety,color='g',linestyle='-',marker='')
+ax.plot(polyx,targety,color='g',linestyle='-',marker='',label="predict")
 # poly points
-ax.plot(polyx,polyy,color='b',linestyle='',marker='*')
+ax.plot(polyx,polyy,color='b',linestyle='-',marker='',label="target")
 
 ax.legend()
 plt.show()

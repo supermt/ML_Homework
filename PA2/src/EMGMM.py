@@ -59,7 +59,7 @@ def scale_data(Y):
         Y[:, i] = (Y[:, i] - min_) / (max_ - min_)
     return Y
 
-def init_params(shape, K,n):
+def init_params(shape, K):
     N, D = shape
     mu = np.random.rand(K, D)
     cov = np.array([np.eye(D)] * K)
@@ -67,9 +67,9 @@ def init_params(shape, K,n):
     return mu, cov, alpha
 
 
-def GMM_EM(Y, K, times,n):
+def GMM_EM(Y, K, times):
     Y = scale_data(Y)
-    mu, cov, alpha = init_params(Y.shape, K,n)
+    mu, cov, alpha = init_params(Y.shape, K)
     print mu
     MU = mu
     for i in range(times):
@@ -81,12 +81,22 @@ def GMM_EM(Y, K, times,n):
             MU=mu
     return i,mu, cov, alpha
 
+def clustering(datapoints,K):
+  points = datapoints.T
+  matY = np.matrix(points, copy=True)
+  iteration, mu, cov, alpha = GMM_EM(matY, K, MAX_ITER)
+  print iteration
+  N = points.shape[0]
+  gamma = getExpectation(matY, mu, cov, alpha)
+  label = np.array(gamma.argmax(axis=1).flatten().tolist()[0])
+  return label
+
 def do_the_clustering(datapoints,n):
   points = datapoints.T
   matY = np.matrix(points, copy=True)
   K = 4
   plt.subplot(2,2,n)
-  iteration, mu, cov, alpha = GMM_EM(matY, K, MAX_ITER,n)
+  iteration, mu, cov, alpha = GMM_EM(matY, K, MAX_ITER)
   print iteration
   N = points.shape[0]
   gamma = getExpectation(matY, mu, cov, alpha)
