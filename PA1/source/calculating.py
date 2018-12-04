@@ -45,10 +45,3 @@ def LASSO(X, y, lambd=0.2, threshold=0.1):
       if delta < threshold:
           break
   return w
-
-def RR(X, y, lambd=0.2):
-  XTX = X.T*X
-  m, _ = XTX.shape
-  I = np.matrix(np.eye(m))
-  w = (XTX + lambd*I).I*X.T*y
-  return w

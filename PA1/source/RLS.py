@@ -5,6 +5,7 @@ import data_reading
 import matplotlib.pyplot as plt
 import calculating as reg
 import random as rd
+from data_reading import grand_order
 
 poly_data , poly_keys = data_reading.readMatFile("poly_data.mat")
 

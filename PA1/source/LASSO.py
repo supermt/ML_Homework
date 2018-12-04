@@ -4,6 +4,7 @@ import numpy as np
 import itertools
 import data_reading
 import matplotlib.pyplot as plt
+from data_reading import grand_order
 
 def lasso_regression(X, y, lambd=0.2, threshold=0.1):
     rss = lambda X, y, w: (y - X*w).T*(y - X*w)
@@ -31,22 +32,15 @@ def lasso_regression(X, y, lambd=0.2, threshold=0.1):
         if delta < threshold:
             break
     return w
-
-def grand_order(X,order=1):
-    matX=[]
-    for i in range(order+1):
-        matX.append(X**i)
-    result = (np.matrix(matX)).T
-    return result
     
 
 if '__main__' == __name__:
     poly_data , poly_keys = data_reading.readMatFile("poly_data.mat")
-
-    X, y = grand_order(poly_data['sampx'][0],5), poly_data['sampy']
-    polyx, polyy= poly_data['polyx'][0], poly_data['polyy']
-
     order = 5
+
+    X, y = grand_order(poly_data['sampx'][0],order), poly_data['sampy']
+    polyx, polyy= poly_data['polyx'][0], poly_data['polyy']
+    count_data , count_keys= data_reading.readMatFile("count_data.mat")
 
     w = lasso_regression(X, y, lambd=10)
     y_prime = (grand_order(polyx,order) * w)
@@ -63,7 +57,7 @@ if '__main__' == __name__:
             least_error = error
     
     w = lasso_regression(X,y,target_alpha)
-    y_prime = (grand_order(polyx,order) * w)
+    y_prime = grand_order(polyx,order) * w
     
     fig = plt.figure("LASSO")
     ax = fig.add_subplot(111)

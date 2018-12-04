@@ -15,8 +15,7 @@ def grand_order(X,order=1):
     result = (np.matrix(matX))
     return result
 
-def BR(sampx,sampy,polyx,polyy,order,alpha,sig2):
-    phi = grand_order(sampx,order)
+def BR(phi,sampy,polyx,polyy,order,alpha,sig2):
     length = len(polyx)
     phii=zeros((order + 1,length))
     predy=zeros((length,1))
@@ -53,7 +52,7 @@ if '__main__' == __name__:
     
     sig2=5.0 # noise
 
-    sigma_star , y_prime = BR(sampx,sampy,polyx,polyy,order,alpha,float(sig2))
+    sigma_star , y_prime = BR(grand_order(sampx,order),sampy,polyx,polyy,order,alpha,float(sig2))
     
     best_alpha=alpha
     least_mean_error = data_reading.MeanSquareError(y_prime,polyy)
