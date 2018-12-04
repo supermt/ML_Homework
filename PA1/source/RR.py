@@ -6,9 +6,6 @@ import data_reading
 import matplotlib.pyplot as plt
 import scipy.optimize as op
 
-def RR(X, y):
-    pass
-
 def grand_order(X,order=1):
   matX=[]
   for i in range(order+1):
@@ -35,7 +32,6 @@ if '__main__' == __name__:
     # th = op.linprog(f, matA, -b)
     fun = lambda x: np.dot(f.transpose(), x)
     cons = ({'type': 'ineq', 'fun': lambda x: b-np.dot(matA, x)})
-    print b-np.dot(matA, X)
     res = op.minimize(fun, X, constraints=cons, method="COBYLA")
 
     w = res.x[0:D]
@@ -46,6 +42,7 @@ if '__main__' == __name__:
     ax.plot(poly_data['sampx'][0],y,color='r',linestyle='',marker='*',label="sample")
     # # regression line
     ax.plot(polyx,y_prime,color='g',linestyle='-',marker='',label="predict")
+    print "mean error: " + str(data_reading.MeanSquareError(y_prime,polyy))
     # poly points
     ax.plot(polyx,polyy,color='b',linestyle='-',label="target")
     ax.legend()

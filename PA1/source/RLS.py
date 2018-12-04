@@ -33,15 +33,31 @@ matFi = np.array(matFi)
 
 # part of painting
 
-fig = plt.figure("RLS")
+fig = plt.figure()
 
 subfigs = []
 
 # for RLS ,testing lambda 1 and 1000
 RLS = fig.add_subplot(111)
 RLS.plot(sampx,sampy,color='r',linestyle='',marker='.')
-RLS.plot(polyx,polyy,color='g',linestyle='-')
-RLS.plot(polyx,reg.verify(polyx,reg.RLS(matFi,sampy,1),order),color='blue',linestyle='-',label="lambda = 1")
-RLS.plot(polyx,reg.verify(polyx,reg.RLS(matFi,sampy,1000),order),color='skyblue',linestyle='-',label="lambda = 1000")
+RLS.plot(polyx,polyy,color='g',linestyle='-',label="target")
+y_prime = reg.verify(polyx,reg.RLS(matFi,sampy,1),order)
+RLS.plot(polyx,y_prime,color='blue',linestyle='-',label="lambda = 1")
+y_prime = reg.verify(polyx,reg.RLS(matFi,sampy,1000),order)
+
+least_error = 100
+target_alpha = 1
+alphas = np.linspace(-2,2,1000)
+for alp in alphas:
+  y_prime = reg.verify(polyx,reg.RLS(matFi,sampy,alp),order)
+  error = data_reading.MeanSquareError(y_prime,polyy)
+  if error <= least_error:
+    target_alpha = alp
+    least_error = error
+    
+y_prime = reg.verify(polyx,reg.RLS(matFi,sampy,target_alpha),order)
+RLS.plot(polyx,y_prime,color='skyblue',linestyle='-',label="lambda = "+str(target_alpha))
+print "least mean error: " + str(data_reading.MeanSquareError(y_prime,polyy)) +" at " + str(target_alpha)
+
 RLS.legend()
 plt.show()

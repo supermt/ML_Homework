@@ -29,7 +29,6 @@ for k in range(0,order):
   matX.append(vectX)
 
 matX = np.array(matX)
-print matX
 
 # Y = [sigma x^0 * y, sigma x^1 * y ....  sigma x^k * y]
 matY = []
@@ -61,6 +60,7 @@ ax.plot(poly_data['sampx'][0],sampy,color='r',linestyle='',marker='*',label="sam
 ax.plot(polyx,targety,color='g',linestyle='-',marker='',label="predict")
 # poly points
 ax.plot(polyx,polyy,color='b',linestyle='-',marker='',label="target")
+print data_reading.MeanSquareError(targety,polyy)
 
 ax.legend()
 plt.show()
