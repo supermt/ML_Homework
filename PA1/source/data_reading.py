@@ -20,14 +20,16 @@ def grand_order(X,order=1):
     return result
 
 def MeanSquareError(y_prime, polyy):        # mean-square error
-    y_prime = np.array(y_prime)
-    sum = 0
-    n = len(polyy)
-    for i in range(n):
-        error = y_prime[i]-polyy[i]
-        sum += (error**2)
-    avr = sum/n
-    return avr[0]
+    # y_prime = np.array(y_prime)
+    # sum = 0
+    # n = len(polyy)
+    # for i in range(n):
+    #     error = y_prime[i]-polyy[i]
+    #     sum += (error**2)
+    # avr = sum/n
+    from sklearn.metrics import mean_squared_error
+    mse = mean_squared_error(y_prime, polyy)
+    return mse
     
 def MeanAbsoluteError(y_prime, polyy):        # mean-absolute error
     y_prime = np.array(y_prime)

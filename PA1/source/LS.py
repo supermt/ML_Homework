@@ -5,7 +5,7 @@ import data_reading
 import matplotlib.pyplot as plt
 from data_reading import grand_order
 
-def do_regession(phi,sampy,order=1):  
+def do_regression(phi,sampy,order=1):  
   w = ((np.linalg.inv(phi * phi.T)) * phi) * sampy
   # part of painting
   return w
@@ -20,7 +20,7 @@ if __name__ == "__main__":
   polyx = poly_data['polyx'][0]
   polyy = poly_data['polyy']
 
-  w = do_regession(grand_order(sampx,order).T,sampy,order)
+  w = do_regression(grand_order(sampx,order).T,sampy,order)
   targety = grand_order(polyx,order) * w
 
   fig = plt.figure("LS")
