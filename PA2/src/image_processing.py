@@ -32,7 +32,7 @@ def demo():
     K=3
     C,Y = vq.kmeans2(X, K, iter=1000, minit='random')
 
-    Y = Y + 1 # Use matlab 1-index labeling
+    Y = Y + 1
     # make segmentation image from labels
     segm = pa2.labels2seg(Y,L)
     pl.subplot(2,3,2)
@@ -58,7 +58,7 @@ def demo():
 
     # # Y = MeanShift.clustering((vq.whiten(X.T)).T, 5)
     # Y = MeanShift(bandwidth=0.9).fit((vq.whiten(X.T)))
-    # Y = Y.labels_ + 1 # Use matlab 1-index labeling
+    # Y = Y.labels_ + 1
     # # make segmentation image from labels
     # segm = pa2.labels2seg(Y,L)
     # pl.subplot(3,3,8)
