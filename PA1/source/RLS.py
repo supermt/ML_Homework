@@ -14,7 +14,7 @@ def do_regression(phi,sampy,alpha):
 def choose_hyper(matFi,sampy,polyx,polyy,order):
   least_error = 100
   target_alpha = 1
-  alphas = np.linspace(-2,2,1000)
+  alphas = np.linspace(-3,2,1000)
   for alp in alphas:
     y_prime = grand_order(polyx,order) * do_regression(matFi,sampy,alp)
     error = data_reading.MeanSquareError(y_prime,polyy)
@@ -26,7 +26,7 @@ def choose_hyper(matFi,sampy,polyx,polyy,order):
 if __name__ == "__main__":
   poly_data , poly_keys = data_reading.readMatFile("poly_data.mat")
 
-  order = 5 
+  order = 10
 
   sampx = poly_data['sampx'][0]
   sampy = poly_data['sampy']

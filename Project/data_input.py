@@ -18,8 +18,8 @@ def getdata(filename, train_percentage = 0.9):
   train_size = int(train_percentage * total_size)
   predict_size = int(total_size - train_size)
 
-  train_set_x = features[:train_size]
-  train_set_y = predicts[:train_size]
+  train_set_x = features[predict_size:]
+  train_set_y = predicts[predict_size:]
 
   predict_set_x = features[:predict_size]
   target_y = predicts[:predict_size]

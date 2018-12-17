@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 import data_reading
-from LS import do_regession as LSRegression
+from LS import do_regression as LSRegression
 from data_reading import grand_order
 import matplotlib.pyplot as plt
 import numpy as np
@@ -36,10 +36,10 @@ if __name__ == '__main__':
   ax.plot(x_label,LS_y_prime,color='r',linestyle='-',marker='',label="predict LS")
   ax.plot(x_label,testy,color='g',linestyle='',marker='.',label="real result")
 
-  abs_errors.append(MeanAbsoluteError(LS_y_prime,testy))
-  sqr_errors.append(MeanSquareError(LS_y_prime,testy))
-  print "LS's absolute error is " + str(MeanAbsoluteError(LS_y_prime,testy)) 
-  print "LS's Square error is " + str(MeanSquareError(LS_y_prime,testy)) 
+  abs_errors.append(MeanAbsoluteError(LS_y_prime,np.round(testy)))
+  sqr_errors.append(MeanSquareError(LS_y_prime,np.round(testy)))
+  print "LS's absolute error is " + str(MeanAbsoluteError(LS_y_prime,np.round(testy))) 
+  print "LS's Square error is " + str(MeanSquareError(LS_y_prime,np.round(testy))) 
   ax.legend()
 
   #RLS
@@ -50,10 +50,10 @@ if __name__ == '__main__':
   ax.plot(x_label,RLS_y_prime,color='r',linestyle='-',marker='',label="predict RLS")
   ax.plot(x_label,testy,color='g',linestyle='',marker='.',label="real result")
 
-  abs_errors.append(MeanAbsoluteError(RLS_y_prime,testy))
-  sqr_errors.append(MeanSquareError(RLS_y_prime,testy))
-  print "RLS's absolute error is " + str(MeanAbsoluteError(RLS_y_prime,testy)) 
-  print "RLS's Square error is " + str(MeanSquareError(RLS_y_prime,testy)) 
+  abs_errors.append(MeanAbsoluteError(RLS_y_prime,np.round(testy)))
+  sqr_errors.append(MeanSquareError(RLS_y_prime,np.round(testy)))
+  print "RLS's absolute error is " + str(MeanAbsoluteError(RLS_y_prime,np.round(testy))) 
+  print "RLS's Square error is " + str(MeanSquareError(RLS_y_prime,np.round(testy))) 
   ax.legend()
 
   #LASSO
@@ -78,8 +78,8 @@ if __name__ == '__main__':
 
   abs_errors.append(MeanAbsoluteError(LASSO_y_prime,testy))
   sqr_errors.append(MeanSquareError(LASSO_y_prime,testy))
-  print "LASSO's absolute error is " + str(MeanAbsoluteError(LASSO_y_prime,testy)) 
-  print "LASSO's Square error is " + str(MeanSquareError(LASSO_y_prime,testy)) 
+  print "LASSO's absolute error is " + str(MeanAbsoluteError(LASSO_y_prime,np.round(testy))) 
+  print "LASSO's Square error is " + str(MeanSquareError(LASSO_y_prime,np.round(testy))) 
 
   ax.legend()
 
@@ -96,8 +96,8 @@ if __name__ == '__main__':
 
   abs_errors.append(MeanAbsoluteError(BR_y_prime,testy))
   sqr_errors.append(MeanSquareError(BR_y_prime,testy))
-  print "BR's absolute error is " + str(MeanAbsoluteError(BR_y_prime,testy)) 
-  print "BR's Square error is " + str(MeanSquareError(BR_y_prime,testy)) 
+  print "BR's absolute error is " + str(MeanAbsoluteError(BR_y_prime,np.round(testy))) 
+  print "BR's Square error is " + str(MeanSquareError(BR_y_prime,np.round(testy))) 
 
   ax.legend()
 

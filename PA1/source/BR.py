@@ -53,7 +53,7 @@ def choose_hyper(sampx,order,sampy,polyx,polyy,alpha,sig2):
 if '__main__' == __name__:
     poly_data , poly_keys = data_reading.readMatFile("poly_data.mat")
 
-    order=5
+    order=10
     alpha=0.5
     
     #initialization

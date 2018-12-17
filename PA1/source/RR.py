@@ -22,7 +22,6 @@ def do_regression(phiT,y,order):
     In = np.eye(n)
     X = np.zeros((n+D,1))
     matA = np.vstack((np.hstack((-phiT, -In)), np.hstack((phiT, -In))))
-    # th = op.linprog(f, matA, -b)
 
     fun = lambda x: np.dot(f.transpose(), x)
     cons = ({'type': 'ineq', 'fun': lambda x: b-np.dot(matA, x)})
@@ -31,9 +30,9 @@ def do_regression(phiT,y,order):
 
 if '__main__' == __name__:
     poly_data , poly_keys = data_reading.readMatFile("poly_data.mat")
-    phiT, y = grand_order(poly_data['sampx'][0],5), poly_data['sampy']
-    polyx, polyy= poly_data['polyx'][0], poly_data['polyy']
     order = 5
+    phiT, y = grand_order(poly_data['sampx'][0],order), poly_data['sampy']
+    polyx, polyy= poly_data['polyx'][0], poly_data['polyy']
     w = do_regression(phiT,y,order)
     y_prime = (grand_order(polyx,order) * w)
     

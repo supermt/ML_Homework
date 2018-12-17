@@ -7,12 +7,13 @@ import pylab as pl
 import PIL.Image as Image
 import scipy.io as sio
 from sklearn.cluster import MeanShift
+from sklearn import preprocessing
 
 def demo():
     import scipy.cluster.vq as vq
 
     ## load and show image
-    img = Image.open('images/370036.jpg')
+    img = Image.open('images/12003.jpg')
     pl.subplot(3,3,1)
     pl.imshow(img)
     pl.subplot(3,3,4)
@@ -26,7 +27,7 @@ def demo():
     X = vq.whiten(X.T)
 
     for i in range(3):
-      Y = MeanShift(bandwidth=0.5*(i+1)).fit(X)
+      Y = MeanShift(bandwidth=0.9*(i+1)).fit(X)
       Y = Y.labels_ + 1 # Use matlab 1-index labeling
       # make segmentation image from labels
       segm = pa2.labels2seg(Y,L)
@@ -37,7 +38,6 @@ def demo():
       csegm = pa2.colorsegms(segm, img)
       pl.subplot(3,3,(3 * i + 3))
       pl.imshow(csegm)
-    
     pl.show()
 
 def main():

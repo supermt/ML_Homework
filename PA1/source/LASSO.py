@@ -39,7 +39,7 @@ def choose_hyper(phi,y,polyx,polyy,order):
     
     least_error = 100
     target_alpha = 1
-    alphas = np.linspace(1,2,10)
+    alphas = np.linspace(-20,-18,10)
     for alp in alphas:
         w = do_regression(phi, y, alp)
         y_prime = (grand_order(polyx,order) * w)
@@ -51,7 +51,7 @@ def choose_hyper(phi,y,polyx,polyy,order):
 
 if '__main__' == __name__:
     poly_data , poly_keys = data_reading.readMatFile("poly_data.mat")
-    order = 5
+    order = 10
 
     X, y = grand_order(poly_data['sampx'][0],order), poly_data['sampy']
     polyx, polyy= poly_data['polyx'][0], poly_data['polyy']
